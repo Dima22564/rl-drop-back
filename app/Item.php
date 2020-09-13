@@ -54,7 +54,7 @@ class Item extends Model
     }
 
 //    $item = Item::find($items[$i]->item_id);
-    return Item::find($items[$i]['item_id']);
+    return Item::with('type')->where('id', $items[$i]['item_id'])->first();
   }
 
   public function craftItem($progress)

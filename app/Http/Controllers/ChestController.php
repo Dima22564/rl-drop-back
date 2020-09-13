@@ -37,7 +37,9 @@ class ChestController extends Controller
   public function openChest(Request $request)
   {
     try {
-      $chest = Chest::with('items')->where('id', $request->get('id'))->first();
+      $chest = Chest::with('items' )
+        ->where('id', $request->get('id'))
+        ->first();
       $platform = $request->get('platform');
       $price = $platform . '_price';
 
