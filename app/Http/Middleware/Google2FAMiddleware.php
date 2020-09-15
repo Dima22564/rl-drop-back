@@ -21,7 +21,10 @@ class Google2FAMiddleware
 //    }
 //
 //    return $authenticator->makeRequestOneTimePasswordResponse();
-    $user = User::where('email', $request->get('email'))->firstOrFail();
+    $user = User::where('email', $request->get('email'))->first();
+    if (!$user) {
+      return response()->json(['error' => ['messages' => ['Invalid credentials']], 'success' => false], 400);
+    }
 
     if (!$user->passwordSecurity->google2fa_enable) {
       return $next($request);

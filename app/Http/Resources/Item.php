@@ -31,9 +31,14 @@ class Item extends JsonResource
       'platform' => $this->whenPivotLoaded('user_item', function () {
         return $this->pivot->platform;
       }),
+      'pivot' => [
+        'id' => $this->whenPivotLoaded('user_item', function () {
+          return $this->pivot->id;
+        })
+      ],
       'type' => new ItemTypeResource($this->whenLoaded('type')),
-      'appearInChest' => $this->when((Auth::user()) ? Auth::user()->isAdmin() : false, $this->appear_in_chest),
-      'appearInCraft' => $this->when((Auth::user()) ? Auth::user()->isAdmin() : false, $this->appear_in_craft),
+      'appearInChest' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->appear_in_chest),
+      'appearInCraft' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->appear_in_craft),
       'chests' => ChestResource::collection($this->whenLoaded('chests'))
     ];
   }

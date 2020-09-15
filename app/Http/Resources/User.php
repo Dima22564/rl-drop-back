@@ -22,7 +22,8 @@ class User extends JsonResource
       'email' => $this->email,
       'phoneNumber' => $this->phone_number,
       'passwordSecurity' => new PasswordSecurity($this->passwordSecurity),
-      'balance' => $this->balance
+      'balance' => $this->balance,
+      'photo' => $this->photo
     ];
   }
 }

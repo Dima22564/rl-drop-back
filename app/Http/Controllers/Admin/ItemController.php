@@ -35,7 +35,7 @@ class ItemController extends Controller
     $item->saveImage($request->file('image'));
     $type->items()->save($item);
 
-    return $this->sendResponse(new ItemResource($item), 'Ok', 200);
+    return $this->sendResponse(new ItemResource($item), 'Ok', 201);
   }
 
   public function deleteById(Request $request, $id)

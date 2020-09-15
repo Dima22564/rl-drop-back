@@ -19,6 +19,6 @@ class ItemTypesController extends Controller
   public function store(CreateItemTypeRequest $request) {
     $type = ItemTypes::create(['type' => $request->get('type')]);
 
-    return $this->sendResponse(new ItemTypeResource($type), 'Ok', 200);
+    return $this->sendResponse(new ItemTypeResource($type), 'Ok', 201);
   }
 }

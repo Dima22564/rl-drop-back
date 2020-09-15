@@ -25,12 +25,12 @@ class AuthController extends BaseController
     ];
     $token = null;
     if (!$token = JWTAuth::attempt($loginData)) {
-      return $this->senderror( 'Unauthorized', [], 401);
+      return $this->senderror( 'Invalid credentials', [], 401);
     }
 
     $user = User::where('email', $loginData['email'])->with('passwordSecurity')->first();
     $img2fa = '';
-    if ($user->passwordSecurity['google2fa_enable']) {
+    if ($user->passwordSecurity->google2fa_enable === 1) {
       $loginData['google2fa_secret'] = $user->passwordSecurity->google2fa_secret;
       $img2faUrl = PasswordSecurity::generate2faUrl($loginData);
       $img2fa = PasswordSecurity::generate2faImg($img2faUrl);
@@ -42,6 +42,7 @@ class AuthController extends BaseController
       'room_id' => $user->id
     ]);
 //      return new \App\Http\Resources\User($user);
+//    return $user;
     return $this->respondWithToken($token, $img2fa);
   }
 

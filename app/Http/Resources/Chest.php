@@ -22,7 +22,7 @@ class Chest extends JsonResource
       'name' => $this->name,
       'oldPrice' => $this->old_price,
       'image' => $this->image,
-      'visibility' => $this->when((Auth::user()) ? Auth::user()->isAdmin() : false, $this->is_case_visible_for_user),
+      'visibility' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->is_case_visible_for_user),
       'xboxPrice' => $this->xbox_price,
       'pcPrice' => $this->pc_price,
       'ps4Price' => $this->ps4_price,

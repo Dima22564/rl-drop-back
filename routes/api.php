@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group([
-  'middleware' => ['throttle:5,60'],
+  'middleware' => ['throttle:10,60'],
 ], function () {
   Route::post('/register', 'AuthController@register');
-  Route::post('/login', 'AuthController@login');
+  Route::post('/login', 'AuthController@login')->middleware(\App\Http\Middleware\Google2FAMiddleware::class);
 });
 
 Route::group([
@@ -27,6 +27,7 @@ Route::group([
   function () {
     Route::post('/logout', 'AuthController@logout');
     Route::post('/user', 'UserController@getUser');
+    Route::get('/user/stats', 'UserController@getStats');
     Route::post('/user/{id}/update', 'UserController@update');
     Route::post('/user/{id}/security/change-password', 'SecurityController@updatePassword');
     Route::post('/enable2fa', 'SecurityController@enable2fa')->name('enable2faSecret');
@@ -37,10 +38,12 @@ Route::group([
     Route::post('/sell-item', 'ItemController@sell');
 
     Route::get('/inventory', 'UserController@getInventory');
+    Route::post('/user/change-photo', 'UserController@changePhoto');
   });
 
 Route::group([
-  'prefix' => 'admin'
+  'prefix' => 'admin',
+//  'middleware' => ['auth.jwt', \App\Http\Middleware\isAdmin::class]
 ], function () {
   Route::get('/item-types', 'Admin\ItemTypesController@index');
   Route::post('/create-item-type', 'Admin\ItemTypesController@store');
@@ -51,6 +54,7 @@ Route::group([
   Route::get('/items-all', 'Admin\ItemController@loadItemsAll');
   Route::delete('/delete-chest/{id}', 'Admin\ChestController@deleteById');
   Route::delete('/delete-item/{id}', 'Admin\ItemController@deleteById');
+  Route::post('/create-faq', 'FaqController@store');
 });
 
 Route::group([
@@ -75,6 +79,8 @@ Route::post('/reset-password/send-link', 'PasswordResetController@sendPasswordRe
 Route::post('/reset-password/new-password', 'PasswordResetController@recoveryPassword');
 
 Route::get('/chest/{id}', 'ChestController@chest');
+
+Route::get('/faqs', 'FaqController@index');
 
 
 

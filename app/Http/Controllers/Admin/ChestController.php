@@ -15,7 +15,7 @@ class ChestController extends Controller
     $chest->saveItems(json_decode($request->get('items')));
     $chest->saveImage($request->file('image'));
 
-    return $this->sendResponse(new ChestResource($chest), 'Ok', 200);
+    return $this->sendResponse(new ChestResource($chest), 'Ok', 201);
   }
 
   public function index()
