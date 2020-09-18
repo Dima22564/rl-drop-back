@@ -25,7 +25,7 @@ class Chest extends Model
   public function items()
   {
     return $this->belongsToMany(Item::class, 'chests_items')
-      ->withPivot('weight');
+      ->withPivot('weight', 'item_id', 'created_at');
   }
 
   public function users()
@@ -37,15 +37,6 @@ class Chest extends Model
   public function winItems()
   {
     return $this->belongsToMany(Item::class, 'chest_item_win');
-  }
-
-  public function saveImage($image)
-  {
-    $filename = $this->id . '.' . $image->extension();
-    $r = $image->storeAs('public/uploads/chests', $filename);
-    $storagePath = env('APP_URL', 'http://127.0.0.1:8000') . Storage::url('uploads/chests/' . $filename);
-    $this->image = $storagePath;
-    $this->save();
   }
 
   public function chooseItem()
@@ -69,13 +60,33 @@ class Chest extends Model
 
   }
 
-  public function saveItems($items)
+  public function saveItems($items, $update = false)
   {
     $itemsIds = array_column($items, 'id');
     $weights = array_column($items, 'weight');
+    if ($update) {
+      $this->items()->detach($itemsIds);
+    }
     foreach ($itemsIds as $key => $id) {
       $this->items()->attach($id, ['weight' => $weights[$key]]);
     }
+  }
+
+  public function saveImage($image)
+  {
+    $filename = $this->id . '.' . $image->extension();
+    $path1 = 'app/public/uploads/chests/' . $this->id . '.png';
+    $path2 = 'app/public/uploads/chests/' . $this->id . '.jpg';
+
+    if (file_exists(storage_path($path1))) {
+      unlink(storage_path('app/public/uploads/chests/' . (string)$this->id . '.png'));
+    } elseif (file_exists(storage_path($path2))) {
+      unlink(storage_path('app/public/uploads/chests/' . (string)$this->id . '.jpg'));
+    }
+    $r = $image->storeAs('public/uploads/chests', $filename);
+    $storagePath = env('APP_URL', 'http://127.0.0.1:8000') . Storage::url('uploads/chests/' . $filename);
+    $this->image = $storagePath;
+    $this->save();
   }
 
 

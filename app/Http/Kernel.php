@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\isAdmin;
+use App\Http\Middleware\Localization;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -22,7 +23,8 @@ class Kernel extends HttpKernel
     \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
     \App\Http\Middleware\TrimStrings::class,
     \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-    isAdmin::class
+    isAdmin::class,
+    Localization::class
   ];
 
   /**
@@ -66,6 +68,6 @@ class Kernel extends HttpKernel
     'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class, // JWT middleware,
-    '2fa' => \App\Http\Middleware\Google2FAMiddleware::class,
+    '2fa' => \App\Http\Middleware\Google2FAMiddleware::class
   ];
 }

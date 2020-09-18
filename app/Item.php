@@ -2,9 +2,11 @@
 
 namespace App;
 
+use Defuse\Crypto\File;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class Item extends Model
@@ -13,7 +15,14 @@ class Item extends Model
 
   protected $table = 'items';
 
-  protected $fillable = ['name', 'xbox_price', 'pc_price', 'ps4_price', 'appear_in_chest', 'appear_in_craft'];
+  protected $fillable = [
+    'name',
+    'xbox_price',
+    'pc_price',
+    'ps4_price',
+    'appear_in_chest',
+    'appear_in_craft'
+  ];
 
 //  public const PERCENT_OF_ITEMS = 20;
 
@@ -24,7 +33,8 @@ class Item extends Model
 
   public function chests()
   {
-    return $this->belongsToMany(Chest::class, 'chests_items');
+    return $this->belongsToMany(Chest::class, 'chests_items')
+      ->withPivot('weight');
   }
 
   public function openChests()
@@ -77,9 +87,26 @@ class Item extends Model
 //    return floor(parent::where('platform', $platform)->count() * $percent / 100);
 //  }
 
+//  public function saveImage($image)
+//  {
+//    $filename = $this->id . '.' . $image->extension();
+//    $r = $image->storeAs('public/uploads/items', $filename);
+//    $storagePath = env('APP_URL', 'http://127.0.0.1:8000') . Storage::url('uploads/items/' . $filename);
+//    $this->image = $storagePath;
+//    $this->save();
+//  }
+
   public function saveImage($image)
   {
     $filename = $this->id . '.' . $image->extension();
+    $path1 = 'app/public/uploads/items/' . $this->id . '.png';
+    $path2 = 'app/public/uploads/items/' . $this->id . '.jpg';
+
+    if (file_exists(storage_path($path1))) {
+      unlink(storage_path('app/public/uploads/items/' . (string)$this->id . '.png'));
+    } elseif (file_exists(storage_path($path2))) {
+      unlink(storage_path('app/public/uploads/items/' . (string)$this->id . '.jpg'));
+    }
     $r = $image->storeAs('public/uploads/items', $filename);
     $storagePath = env('APP_URL', 'http://127.0.0.1:8000') . Storage::url('uploads/items/' . $filename);
     $this->image = $storagePath;

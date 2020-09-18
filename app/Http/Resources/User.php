@@ -22,7 +22,11 @@ class User extends JsonResource
       'email' => $this->email,
       'phoneNumber' => $this->phone_number,
       'passwordSecurity' => new PasswordSecurity($this->passwordSecurity),
+      'notifications' => $this->whenLoaded('customNotifications'),
       'balance' => $this->balance,
+      'steamLink' => $this->steam_link,
+      'xboxLink' => $this->xbox_link,
+      'ps4Link' => $this->ps4_link,
       'photo' => $this->photo
     ];
   }

@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Chest;
+use App\Faq;
 use App\Item;
+use App\Notification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
 use App\Http\Resources\Chest as ChestResource;
 use App\Http\Resources\Item as ItemResource;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Events\CreateNotification;
 
 class ChestController extends Controller
 {
@@ -28,8 +32,10 @@ class ChestController extends Controller
 
   public function index()
   {
-    $chests = Chest::where('is_case_visible_for_user', 1)
-      ->get();
+    $chests = Cache::remember('chests', 60 * 60, function () {
+      return Chest::where('is_case_visible_for_user', 1)
+        ->get();
+    });
 
     return $this->sendResponse(ChestResource::collection($chests), 'Ok', 200);
   }
@@ -37,7 +43,9 @@ class ChestController extends Controller
   public function openChest(Request $request)
   {
     try {
-      $chest = Chest::with('items' )
+      $chest = Chest::with(['items' => function($query) {
+        $query->where('appear_in_chest', 1);
+      }])
         ->where('id', $request->get('id'))
         ->first();
       $platform = $request->get('platform');
@@ -50,7 +58,7 @@ class ChestController extends Controller
 
       DB::beginTransaction();
 
-//      Auth::user()->changeBalance($chest->price * -1);
+      Auth::user()->changeBalance($chest->price * -1);
 
       $itemsWeights = array_column($chest->items->toArray(), 'pivot');
       $item = Item::chooseRandomItem($itemsWeights);
@@ -61,6 +69,15 @@ class ChestController extends Controller
         'platform' => $platform,
         'price' => $chest->$price
       ]);
+      $notification = Notification::create([
+        'text_en' => sprintf("<span class=\"white\"> You</span> opened chest! <span class=\"blue\">-%s</span>", (string)$chest->$price),
+        'text_ru' => sprintf("<span class=\"white\"> Вы</span> открыли кейс. <span class=\"blue\">-%s</span>", (string)$chest->$price),
+        'type' => Notification::SUCCESS,
+        'date' => Carbon::now()->format('Y-m-d H:m:s'),
+        'user_id' => Auth::user()->id
+      ]);
+
+      event(new CreateNotification($notification));
       DB::commit();
 
 //      return $this->sendResponse($item, 'Ok', 200);

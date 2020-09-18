@@ -12,6 +12,8 @@ use App\Http\Resources\Item as ItemResource;
 use App\Http\Requests\User\UpdateUserRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Jobs\DeleteNotification;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\File;
@@ -26,7 +28,10 @@ class UserController extends BaseController
   public function getUser()
   {
     $userId = Auth::user()->id;
-    $user = new UserResource(User::where('id', $userId)->with('passwordSecurity')->first());
+    $user = new UserResource(User::where('id', $userId)
+      ->with(['passwordSecurity', 'customNotifications' => function ($query) {
+        $query->orderBy('created_at', 'desc');
+      }])->first());
     if ($user->passwordSecurity->google2fa_enable) {
       $fields = [
         'email' => $user->email,
@@ -59,15 +64,27 @@ class UserController extends BaseController
 
   public function getInventory()
   {
-    $items = User::where('id', Auth::user()->id)
-      ->with(['items' => function ($query) {
-        $query
-          ->where('craft_fail', 0)
-          ->orWhere('craft_fail', null)
-          ->where('sold', 0)
-          ->with('type');
-      }])
-      ->first();
+    $items = Cache::remember('inventory', 60, function () {
+      return User::where('id', Auth::user()->id)
+        ->with(['items' => function ($query) {
+          $query
+            ->withTrashed()
+            ->where('craft_fail', 0)
+            ->where('sold', 0)
+            ->orWhere('craft_fail', null)
+            ->with('type');
+        }])
+        ->first();
+    });
+//    $items = User::where('id', Auth::user()->id)
+//      ->with(['items' => function ($query) {
+//        $query
+//          ->where('craft_fail', 0)
+//          ->orWhere('craft_fail', null)
+//          ->where('sold', 0)
+//          ->with('type');
+//      }])
+//      ->first();
 
     if ($items->items->count() === 0) {
       return $this->sendResponse(false, 'No items', 200);
@@ -120,12 +137,34 @@ class UserController extends BaseController
           ->orWhere('craft_fail', null);
       })->count();
 
+    $casesCrafts = [];
+    foreach ($cases as $key => $value) {
+      foreach ($value as $key2 => $value2) {
+        $casesCrafts[$key2] = $value2;
+      }
+    }
+
     return $this->sendResponse([
-      'cases' => ($cases->count() > 0) ? $cases[0]['cases'] : 0,
-      'crafts' => ($cases->count() > 0) ? $cases[1]['crafts'] : 0,
+      'cases' => (array_key_exists('cases', $casesCrafts)) ? $casesCrafts['cases'] : 0,
+      'crafts' => (array_key_exists('crafts', $casesCrafts)) ? $casesCrafts['crafts'] : 0,
       'items' => $items
     ], 'Ok', 200);
 
+  }
 
+  public function readNotification($id)
+  {
+    DeleteNotification::dispatch($id);
+  }
+
+  public function links(Request $request)
+  {
+    Auth::user()->update([
+      'steam_link' => $request->get('steamLink'),
+      'xbox_link' => $request->get('xboxLink'),
+      'ps4_link' => $request->get('ps4Link'),
+    ]);
+
+    return $this->sendResponse([], 'Ok', 201);
   }
 }

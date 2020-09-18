@@ -36,6 +36,9 @@ class Item extends JsonResource
           return $this->pivot->id;
         })
       ],
+      'weight' => $this->when(Auth::user()->isAdmin(), $this->whenPivotLoaded('chests_items', function () {
+        return $this->pivot->weight;
+      })),
       'type' => new ItemTypeResource($this->whenLoaded('type')),
       'appearInChest' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->appear_in_chest),
       'appearInCraft' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->appear_in_craft),

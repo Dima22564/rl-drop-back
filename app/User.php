@@ -22,7 +22,7 @@ class User extends Authenticatable implements JWTSubject
    * @var array
    */
   protected $fillable = [
-    'name', 'email', 'phone_number'
+    'name', 'email', 'phone_number', 'steam_link', 'xbox_link', 'ps4_link'
   ];
 
   /**
@@ -42,6 +42,11 @@ class User extends Authenticatable implements JWTSubject
   protected $casts = [
     'email_verified_at' => 'datetime',
   ];
+
+  public function customNotifications()
+  {
+    return $this->hasMany(Notification::class);
+  }
 
   public function getJWTIdentifier()
   {
@@ -74,10 +79,11 @@ class User extends Authenticatable implements JWTSubject
   public function chests()
   {
     return $this->belongsToMany(Chest::class, 'user_chest')
-      ->withPivot(['date', 'item_id']);
+      ->withPivot(['date']);
   }
 
-  public function items() {
+  public function items()
+  {
     return $this->belongsToMany(Item::class, 'user_item')
       ->withPivot(['is_craft', 'sold', 'platform', 'id']);
   }
@@ -103,8 +109,10 @@ class User extends Authenticatable implements JWTSubject
     $path1 = 'app/public/uploads/users/' . (string)Auth::user()->id . '.png';
     $path2 = 'app/public/uploads/users/' . (string)Auth::user()->id . '.jpg';
 
-    if (file_exists(storage_path($path1)) || file_exists(storage_path($path2))) {
+    if (file_exists(storage_path($path1))) {
       unlink(storage_path('app/public/uploads/users/' . (string)$this->id . '.png'));
+    } elseif (file_exists(storage_path($path2))) {
+      unlink(storage_path('app/public/uploads/users/' . (string)$this->id . '.jpg'));
     }
     $r = $image->storeAs('public/uploads/users', $filename);
     $storagePath = env('APP_URL', 'http://127.0.0.1:8000') . Storage::url('uploads/users/' . $filename);

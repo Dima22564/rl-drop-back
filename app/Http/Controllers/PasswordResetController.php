@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CreateNotification;
 use App\Http\Requests\Security\ChangePasswordRequest;
+use App\Notification;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -64,6 +66,16 @@ class PasswordResetController extends BaseController
     $user = User::where('email', $passwordResetCell->email)->first();
     $passwordResetCell->delete();
     $user->cryptPassword($request->get('password'));
+
+    $notification = Notification::create([
+      'text_en' => sprintf("<span class=\"white\"> You</span> changed your password!"),
+      'text_ru' => sprintf("<span class=\"white\"> Вы</span> сменили пароль!"),
+      'type' => Notification::WARNING,
+      'date' => Carbon::now()->format('Y-m-d H:m:s'),
+      'user_id' => Auth::user()->id
+    ]);
+
+    event(new CreateNotification($notification));
 
     return $this->sendResponse([], 'Your password reset!', 200);
   }

@@ -28,7 +28,9 @@ class AuthController extends BaseController
       return $this->senderror( 'Invalid credentials', [], 401);
     }
 
-    $user = User::where('email', $loginData['email'])->with('passwordSecurity')->first();
+    $user = User::where('email', $loginData['email'])->with(['passwordSecurity', 'customNotifications' => function ($query) {
+      $query->orderBy('created_at', 'desc');
+    }])->first();
     $img2fa = '';
     if ($user->passwordSecurity->google2fa_enable === 1) {
       $loginData['google2fa_secret'] = $user->passwordSecurity->google2fa_secret;

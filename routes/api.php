@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Localization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group([
-  'middleware' => ['throttle:10,60'],
+  'middleware' => ['throttle:60,60'],
 ], function () {
   Route::post('/register', 'AuthController@register');
   Route::post('/login', 'AuthController@login')->middleware(\App\Http\Middleware\Google2FAMiddleware::class);
@@ -37,8 +38,12 @@ Route::group([
     Route::post('/play-craft', 'ItemController@play');
     Route::post('/sell-item', 'ItemController@sell');
 
+    Route::get('/read-notification/{id}', 'UserController@readNotification');
+
     Route::get('/inventory', 'UserController@getInventory');
     Route::post('/user/change-photo', 'UserController@changePhoto');
+
+    Route::post('/user/links', 'UserController@links');
   });
 
 Route::group([
@@ -55,6 +60,13 @@ Route::group([
   Route::delete('/delete-chest/{id}', 'Admin\ChestController@deleteById');
   Route::delete('/delete-item/{id}', 'Admin\ItemController@deleteById');
   Route::post('/create-faq', 'FaqController@store');
+
+  Route::get('/item/{id}', 'Admin\ItemController@getById');
+  Route::post('/item/update/{id}', 'Admin\ItemController@update');
+
+  Route::get('/chest/{id}', 'Admin\ChestController@getById');
+  Route::post('/chest/update/{id}', 'Admin\ChestController@update');
+
 });
 
 Route::group([
@@ -80,7 +92,7 @@ Route::post('/reset-password/new-password', 'PasswordResetController@recoveryPas
 
 Route::get('/chest/{id}', 'ChestController@chest');
 
-Route::get('/faqs', 'FaqController@index');
+Route::get('/faqs', 'FaqController@index')->middleware(Localization::class);
 
 
 
