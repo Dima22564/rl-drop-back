@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\Stats;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class TypeController extends Controller
 {

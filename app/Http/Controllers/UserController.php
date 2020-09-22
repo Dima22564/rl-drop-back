@@ -59,7 +59,7 @@ class UserController extends BaseController
       return $this->sendError('Something goes wrong!', [], 404);
     }
 
-    return $this->sendResponse(['user' => $isUserUpdated], 'Profile successfully updated', 200);
+    return $this->sendResponse(['user' => $isUserUpdated], 'Profile successfully updated', 202);
   }
 
   public function getInventory()
@@ -116,7 +116,7 @@ class UserController extends BaseController
 //    return (string)$user->id;
 //    return file_exists(storage_path('app/public/uploads/users/12.png'));
 
-    return $this->sendResponse($user->photo, 'Ok', 200);
+    return $this->sendResponse($user->photo, 'Ok', 202);
   }
 
   public function getStats()

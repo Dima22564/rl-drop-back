@@ -63,7 +63,7 @@ class AuthController extends BaseController
     $user->cryptPassword($request->get('password'));
     lad($user);
     $user->createRoom($user->id);
-    return $this->sendResponse([], 'User created successfully', 200);
+    return $this->sendResponse([], 'User created successfully', 201);
   }
 
   public function refresh()

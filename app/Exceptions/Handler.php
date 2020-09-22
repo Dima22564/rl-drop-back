@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\JWT;
 
 class Handler extends ExceptionHandler
 {
@@ -51,13 +53,25 @@ class Handler extends ExceptionHandler
         $message = $exception->errors();
       }
 
+      if ($exception instanceof JWTException) {
+        $message = 'Unauthorized';
+
+        $json = [
+          'success' => false,
+          'error' => [
+            'messages' => $message,
+          ],
+          'status' => 401
+        ];
+        return response()->json($json, 401);
+      }
+
       $json = [
         'success' => false,
         'error' => [
           'messages' => $message,
         ],
       ];
-
       // возвращаем массив ошибок
       return response()->json($json, 400);
     }

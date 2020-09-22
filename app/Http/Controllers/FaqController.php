@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\API\BaseController as Controller;
+use Illuminate\Support\Facades\Redis;
 
 class FaqController extends Controller
 {
