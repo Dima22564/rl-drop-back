@@ -24,7 +24,8 @@ class AuthController extends BaseController
       'password' => $request->get('password')
     ];
     $token = null;
-    if (!$token = JWTAuth::attempt($loginData)) {
+    $role = User::detectRole($loginData['email']);
+    if (!$token = JWTAuth::claims(['role' => $role])->attempt($loginData)) {
       return $this->senderror( 'Invalid credentials', [], 401);
     }
 

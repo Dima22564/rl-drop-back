@@ -64,27 +64,28 @@ class UserController extends BaseController
 
   public function getInventory()
   {
-    $items = Cache::remember('inventory', 60, function () {
-      return User::where('id', Auth::user()->id)
-        ->with(['items' => function ($query) {
-          $query
-            ->withTrashed()
-            ->where('craft_fail', 0)
-            ->where('sold', 0)
-            ->orWhere('craft_fail', null)
-            ->with('type');
-        }])
-        ->first();
-    });
-//    $items = User::where('id', Auth::user()->id)
-//      ->with(['items' => function ($query) {
-//        $query
-//          ->where('craft_fail', 0)
-//          ->orWhere('craft_fail', null)
-//          ->where('sold', 0)
-//          ->with('type');
-//      }])
-//      ->first();
+//    $items = Cache::remember('inventory', 60, function () {
+//      return User::where('id', Auth::user()->id)
+//        ->with(['items' => function ($query) {
+//          $query
+//            ->withTrashed()
+//            ->where('craft_fail', 0)
+//            ->where('sold', 0)
+//            ->orWhere('craft_fail', null)
+//            ->with('type');
+//        }])
+//        ->first();
+//    });
+    $items = User::where('id', Auth::user()->id)
+      ->with(['items' => function ($query) {
+        $query
+          ->withTrashed()
+          ->where('craft_fail', 0)
+          ->where('sold', 0)
+          ->orWhere('craft_fail', null)
+          ->with('type');
+      }])
+      ->first();
 
     if ($items->items->count() === 0) {
       return $this->sendResponse(false, 'No items', 200);

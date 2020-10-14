@@ -12,11 +12,12 @@ class DatabaseSeeder extends Seeder
   public function run()
   {
     $this->call([
-      UsersTableSeeder::class,
-      ItemTypesSeeder::class,
-      ItemSeeder::class,
-      ChestsSeeder::class,
-      FaqsSeeder::class
+      ItemColorsSeeder::class
+//      UsersTableSeeder::class,
+//      ItemTypesSeeder::class,
+//      ItemSeeder::class,
+//      ChestsSeeder::class,
+//      FaqsSeeder::class,
     ]);
 
 //    factory(\App\Chest::class, 200)->create()->each(function ($chest) {

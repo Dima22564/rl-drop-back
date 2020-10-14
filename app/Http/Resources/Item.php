@@ -39,6 +39,8 @@ class Item extends JsonResource
       'weight' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->whenPivotLoaded('chests_items', function () {
         return $this->pivot->weight;
       })),
+      'text' => $this->text,
+      'color' => $this->color,
       'type' => new ItemTypeResource($this->whenLoaded('type')),
       'appearInChest' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->appear_in_chest),
       'appearInCraft' => $this->when(Auth::user() ? Auth::user()->isAdmin() : false, $this->appear_in_craft),

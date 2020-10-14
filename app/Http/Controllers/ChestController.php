@@ -32,12 +32,17 @@ class ChestController extends Controller
 
   public function index()
   {
+
     $chests = Cache::remember('chests', 60 * 60, function () {
-      return Chest::where('is_case_visible_for_user', 1)
+      $groupedChests = Chest::where('is_case_visible_for_user', 1)
         ->get();
+      $chestsCollection = ChestResource::collection($groupedChests);
+      return collect($chestsCollection)->groupBy('category');
     });
 
-    return $this->sendResponse(ChestResource::collection($chests), 'Ok', 200);
+    return $this->sendResponse([
+      'chests' => $chests,
+    ], 'Ok', 200);
   }
 
   public function openChest(Request $request)
@@ -58,7 +63,7 @@ class ChestController extends Controller
 
       DB::beginTransaction();
 
-      Auth::user()->changeBalance($chest->price * -1);
+      Auth::user()->changeBalance($chest->$price * -1);
 
       $itemsWeights = array_column($chest->items->toArray(), 'pivot');
       $item = Item::chooseRandomItem($itemsWeights);

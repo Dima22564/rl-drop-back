@@ -21,7 +21,9 @@ class Item extends Model
     'pc_price',
     'ps4_price',
     'appear_in_chest',
-    'appear_in_craft'
+    'appear_in_craft',
+    'color',
+    'text'
   ];
 
 //  public const PERCENT_OF_ITEMS = 20;
@@ -54,7 +56,7 @@ class Item extends Model
     $i = 0;
     $n = 0;
     $weights = array_column($items, 'weight');
-    $num = mt_rand(0, array_sum($weights));
+    $num = mt_rand(1, array_sum($weights));
     while ($i < $count) {
       $n += $weights[$i];
       if ($n >= $num) {

@@ -103,6 +103,11 @@ class User extends Authenticatable implements JWTSubject
     return false;
   }
 
+  public static function detectRole($email)
+  {
+    return User::where('email', $email)->first()->role;
+  }
+
   public function savePhoto($image)
   {
     $filename = (string)$this->id . '.' . $image->extension();

@@ -16,11 +16,11 @@ class isAdmin
    */
   public function handle($request, Closure $next)
   {
-//    if (!Auth::user()->isAdmin()) {
-//      return false;
-//    }
+    if (!Auth::user()->isAdmin()) {
+      return response()->json([
+        'error' => new \Exception('Forbidden'),
+        'success' => false], 403);
+    }
     return $next($request);
-//    return true;
-
   }
 }

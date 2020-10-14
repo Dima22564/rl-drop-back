@@ -121,11 +121,12 @@ class ItemController extends Controller
         ->limit(1)
         ->update(['sold' => 1]);
 
-      $this->user->changeBalance($item->$price);
       if (!$userItem) {
         DB::rollBack();
         return $this->sendError('Something went wrong!', [], 404);
       }
+
+      $this->user->changeBalance($item->$price);
 
       $notification = Notification::create([
         'text_en' => sprintf("<span class=\"white\"> You</span> sold <span class=\"blue\">%s +%s$</span>", $item->name, (string)$item->$price ),

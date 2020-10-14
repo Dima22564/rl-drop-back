@@ -26,6 +26,7 @@ class Chest extends JsonResource
       'xboxPrice' => $this->xbox_price,
       'pcPrice' => $this->pc_price,
       'ps4Price' => $this->ps4_price,
+      'category' => $this->category,
       'items' => ItemResource::collection($this->whenLoaded('items')),
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at,

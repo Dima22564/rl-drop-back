@@ -16,7 +16,7 @@ class ChestController extends Controller
   public function store(Request $request)
   {
     Cache::forget('chests');
-    $chest = Chest::create($request->file('image'));
+    $chest = Chest::create($request->all());
     $chest->saveItems(json_decode($request->get('items')));
     $chest->saveImage($request->file('image'));
 

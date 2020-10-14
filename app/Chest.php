@@ -19,7 +19,8 @@ class Chest extends Model
     'name',
     'xbox_price',
     'pc_price',
-    'ps4_price'
+    'ps4_price',
+    'category'
   ];
 
   public function items()

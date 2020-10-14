@@ -15,5 +15,7 @@ $factory->define(\App\Item::class, function (Faker $faker) {
     'appear_in_chest' => $faker->boolean(),
     'appear_in_craft' => $faker->boolean(),
     'type_id' => $faker->numberBetween(1, 9),
+    'text' => $faker->sentence,
+    'color' => \Illuminate\Support\Facades\DB::table('item_colors')->find($faker->numberBetween(1, 14))->color
   ];
 });

@@ -48,7 +48,7 @@ Route::group([
 
 Route::group([
   'prefix' => 'admin',
-//  'middleware' => ['auth.jwt', \App\Http\Middleware\isAdmin::class]
+  'middleware' => ['auth.jwt', \App\Http\Middleware\isAdmin::class]
 ], function () {
   Route::get('/item-types', 'Admin\ItemTypesController@index');
   Route::post('/create-item-type', 'Admin\ItemTypesController@store');
@@ -70,7 +70,8 @@ Route::group([
 });
 
 Route::group([
-  'prefix' => 'admin/stats'
+  'prefix' => 'admin/stats',
+  'middleware' => ['auth.jwt', \App\Http\Middleware\isAdmin::class]
 ], function () {
   Route::get('/chest/{craft}', 'Admin\Stats\ChestController@index');
   Route::post('/chest-stats-between-time', 'Admin\Stats\ChestController@chestStatsBetweenTime');
@@ -84,6 +85,8 @@ Route::group([
 Route::get('/chests-list', 'ChestController@index');
 Route::get('/craft-items', 'ItemController@loadCraftItems');
 Route::get('/craft-item/{id}', 'ItemController@craftItem');
+
+Route::get('/stats', 'AllController@index');
 
 
 Route::post('/reset-password/send-link', 'PasswordResetController@sendPasswordResetLink')->middleware('throttle:5,60');
