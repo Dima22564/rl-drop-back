@@ -44,6 +44,8 @@ Route::group([
     Route::post('/user/change-photo', 'UserController@changePhoto');
 
     Route::post('/user/links', 'UserController@links');
+
+    Route::post('/withdraw', 'WithdrawController@withdraw');
   });
 
 Route::group([

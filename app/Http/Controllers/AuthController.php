@@ -6,11 +6,13 @@ use App\Events\CustomNotification;
 use App\Http\Requests\User\LoginUserRequest;
 use App\Http\Requests\User\UserCreateRequest;
 use App\PasswordSecurity;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\BaseController;
 //use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Resources\User as UserResource;
 
@@ -62,8 +64,12 @@ class AuthController extends BaseController
     $passwordSecurity = PasswordSecurity::create(['user_id' => $user->id]);
     $user->password_security = $passwordSecurity->id;
     $user->cryptPassword($request->get('password'));
-    lad($user);
     $user->createRoom($user->id);
+    $roles = Role::all();
+    DB::table('user_role')->insert([
+      'user_id' => $user->id,
+      'role_id' => $roles->where('role', 'user')->first()->id
+    ]);
     return $this->sendResponse([], 'User created successfully', 201);
   }
 

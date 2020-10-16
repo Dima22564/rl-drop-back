@@ -8,6 +8,7 @@ use App\Http\Resources\Item as ItemResource;
 use App\Item;
 use App\ItemTypes;
 use App\Notification;
+use App\Withdraw;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -82,8 +83,8 @@ class ItemController extends Controller
         ]);
 
       $notification = Notification::create([
-        'text_en' => sprintf("<span class=\"white\"> You</span> begin to craft! <span class=\"blue\">%s -%s</span>", $item->name, $item->$price ),
-        'text_ru' => sprintf("<span class=\"white\"> Вы</span> начали крафт! <span class=\"blue\">%s -%s</span>", $item->name, $item->$price ),
+        'text_en' => sprintf("<span class=\"white\"> You</span> begin to craft! <span class=\"blue\">%s -%s</span>", $item->name, $item->$price),
+        'text_ru' => sprintf("<span class=\"white\"> Вы</span> начали крафт! <span class=\"blue\">%s -%s</span>", $item->name, $item->$price),
         'type' => Notification::WARNING,
         'date' => Carbon::now()->format('Y-m-d H:m:s'),
         'user_id' => Auth::user()->id
@@ -115,8 +116,8 @@ class ItemController extends Controller
         ->where('sold', 0)
         ->where('platform', $platform)
         ->where(function ($query) {
-            $query->where('craft_fail', 0)
-              ->orWhere('craft_fail', null);
+          $query->where('craft_fail', 0)
+            ->orWhere('craft_fail', null);
         })
         ->limit(1)
         ->update(['sold' => 1]);
@@ -129,8 +130,8 @@ class ItemController extends Controller
       $this->user->changeBalance($item->$price);
 
       $notification = Notification::create([
-        'text_en' => sprintf("<span class=\"white\"> You</span> sold <span class=\"blue\">%s +%s$</span>", $item->name, (string)$item->$price ),
-        'text_ru' => sprintf("<span class=\"white\"> Вы</span> продали <span class=\"blue\">%s +%s$</span>", $item->name, (string)$item->$price ),
+        'text_en' => sprintf("<span class=\"white\"> You</span> sold <span class=\"blue\">%s +%s$</span>", $item->name, (string)$item->$price),
+        'text_ru' => sprintf("<span class=\"white\"> Вы</span> продали <span class=\"blue\">%s +%s$</span>", $item->name, (string)$item->$price),
         'type' => Notification::WARNING,
         'date' => Carbon::now()->format('Y-m-d H:m:s'),
         'user_id' => Auth::user()->id

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
@@ -101,6 +102,16 @@ class User extends Authenticatable implements JWTSubject
       return true;
     }
     return false;
+  }
+
+  public function roles()
+  {
+    return $this->belongsToMany(Role::class, 'user_role');
+  }
+
+  public function withdraws()
+  {
+    return $this->hasMany(Withdraw::class);
   }
 
   public static function detectRole($email)
