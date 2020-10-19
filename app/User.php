@@ -98,7 +98,7 @@ class User extends Authenticatable implements JWTSubject
 
   public function isAdmin()
   {
-    if ($this->is_admin === 1) {
+    if (array_column($this->roles->toArray(), 'role') === Role::ADMIN_ROLE) {
       return true;
     }
     return false;
@@ -117,6 +117,14 @@ class User extends Authenticatable implements JWTSubject
   public static function detectRole($email)
   {
     return User::where('email', $email)->first()->role;
+  }
+
+  public static function getRoles($email)
+  {
+    return array_column(User::where('email', $email)
+      ->with(['roles' => function ($query) {
+        $query;
+      }])->first()->roles->toArray(), 'role');
   }
 
   public function savePhoto($image)

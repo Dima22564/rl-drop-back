@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
 use Illuminate\Support\Facades\DB;
 use App\Services\Stats as StatsService;
+use Illuminate\Support\Facades\Gate;
 
 class CraftController extends Controller
 {
@@ -18,6 +19,9 @@ class CraftController extends Controller
 
   public function index($craft)
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     $data = $this->statsService->getFilteredItemsForCraft($craft);
 
     $keys = [];

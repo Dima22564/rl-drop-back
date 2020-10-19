@@ -6,12 +6,16 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redis;
 
 class TypeController extends Controller
 {
   public function index()
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     $userItems = User::has('items')->with(['items' => function($query) {
       $query->with('type');
     }])->get()->toArray();

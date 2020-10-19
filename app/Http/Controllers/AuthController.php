@@ -26,8 +26,8 @@ class AuthController extends BaseController
       'password' => $request->get('password')
     ];
     $token = null;
-    $role = User::detectRole($loginData['email']);
-    if (!$token = JWTAuth::claims(['role' => $role])->attempt($loginData)) {
+    $roles = User::getRoles($loginData['email']);
+    if (!$token = JWTAuth::claims(['roles' => $roles])->attempt($loginData)) {
       return $this->senderror( 'Invalid credentials', [], 401);
     }
 
@@ -65,10 +65,10 @@ class AuthController extends BaseController
     $user->password_security = $passwordSecurity->id;
     $user->cryptPassword($request->get('password'));
     $user->createRoom($user->id);
-    $roles = Role::all();
+    $role = Role::where('role', Role::USER_ROLE)->first();
     DB::table('user_role')->insert([
       'user_id' => $user->id,
-      'role_id' => $roles->where('role', 'user')->first()->id
+      'role_id' => $role->role_id
     ]);
     return $this->sendResponse([], 'User created successfully', 201);
   }

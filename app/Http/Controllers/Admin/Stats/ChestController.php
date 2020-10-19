@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\API\BaseController as Controller;
 use App\Services\Stats as StatsService;
+use Illuminate\Support\Facades\Gate;
 
 class ChestController extends Controller
 {
@@ -19,6 +20,9 @@ class ChestController extends Controller
 
   public function index($craft)
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     $data = $this->statsService->getIndexData($craft);
 
     $keys = [];
@@ -59,6 +63,9 @@ class ChestController extends Controller
 
   public function chestStatsBetweenTime(Request $request)
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     $to = $request->get('dateTo');
     $from = $request->get('dateFrom');
     $stats = DB::table('user_chest')

@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Role;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\Cache;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -37,6 +40,22 @@ class AuthServiceProvider extends ServiceProvider
 
     Gate::define('open-chest-opened', function ($user, $payload) {
       return $payload === 1;
+    });
+
+    Gate::define('admin', function (User $user) {
+      $roles = array_column(User::with(['roles' => function ($query) {
+        $query->select('role');
+      }])->find($user->id)->roles->toArray(), 'role');
+
+      return in_array(Role::ADMIN_ROLE, $roles);
+    });
+
+    Gate::define('messenger', function (User $user) {
+      $roles = array_column(User::with(['roles' => function ($query) {
+        $query->select('role');
+      }])->find($user->id)->roles->toArray(), 'role');
+
+      return in_array(Role::MESSENGER_ROLE, $roles);
     });
   }
 }

@@ -50,7 +50,7 @@ Route::group([
 
 Route::group([
   'prefix' => 'admin',
-  'middleware' => ['auth.jwt', \App\Http\Middleware\isAdmin::class]
+  'middleware' => ['auth.jwt']
 ], function () {
   Route::get('/item-types', 'Admin\ItemTypesController@index');
   Route::post('/create-item-type', 'Admin\ItemTypesController@store');

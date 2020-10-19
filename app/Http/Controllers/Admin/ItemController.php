@@ -11,12 +11,16 @@ use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\API\BaseController as Controller;
 use App\Http\Resources\Item as ItemResource;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Gate;
 
 class ItemController extends Controller
 {
 
   public function loadItemsForChests()
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     $items = Item::where('appear_in_chest', 1)->with('type')->get();
 //    return $this->sendResponse(ItemResource::collection($items), 'Ok', 200);
     return $this->sendResponse($items, 'Ok', 200);
@@ -24,6 +28,9 @@ class ItemController extends Controller
 
   public function loadItemsAll()
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     $items = Item::with('type:id,type')->get();
 
     return $this->sendResponse(ItemResource::collection($items), 'Ok', 200);
@@ -31,6 +38,9 @@ class ItemController extends Controller
 
   public function store(Request $request)
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     Cache::forget('craftItems');
     $type = ItemTypes::find($request->get('type'));
     $item = Item::create($request->all());
@@ -42,6 +52,9 @@ class ItemController extends Controller
 
   public function deleteById(Request $request, $id)
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     Cache::forget('craftItems');
     $result = Item::find($id)->delete();
 
@@ -50,6 +63,9 @@ class ItemController extends Controller
 
   public function getById($id)
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     $item = Item::with('type')->find($id);
 
     return $this->sendResponse(new ItemResource($item), 'Ok', 200);
@@ -57,6 +73,9 @@ class ItemController extends Controller
 
   public function update(Request $request, $id)
   {
+    if (!Gate::allows('admin')) {
+      return $this->sendError('Forbidden', [], 403);
+    }
     Cache::forget('craftItems');
     $item = Item::find($id);
     $item->update($request->all());

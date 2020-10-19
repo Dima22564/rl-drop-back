@@ -6,6 +6,7 @@ use App\Chest;
 use App\Faq;
 use App\Item;
 use App\Notification;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
