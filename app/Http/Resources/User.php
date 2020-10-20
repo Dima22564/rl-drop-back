@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\PasswordSecurity;
+use Illuminate\Support\Facades\Gate;
 
 class User extends JsonResource
 {
@@ -27,7 +28,8 @@ class User extends JsonResource
       'steamLink' => $this->steam_link,
       'xboxLink' => $this->xbox_link,
       'ps4Link' => $this->ps4_link,
-      'photo' => $this->photo
+      'photo' => $this->photo,
+      'roles' => $this->when(Gate::allows('admin'), $this->whenLoaded('roles'))
     ];
   }
 }

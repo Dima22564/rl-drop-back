@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWithdrawsTable extends Migration
+class AddColumnMessengerIdToWithdrawsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,19 +13,12 @@ class CreateWithdrawsTable extends Migration
    */
   public function up()
   {
-    Schema::create('withdraws', function (Blueprint $table) {
-      $table->id('id');
-      $table->string('status')
-        ->nullable();
-      $table->foreignId('item_id')
-        ->references('id')
-        ->on('items')
-        ->onDelete('cascade');
-      $table->foreignId('user_id')
+    Schema::table('withdraws', function (Blueprint $table) {
+      $table->foreignId('messenger_id')
+        ->after('user_id')
         ->references('id')
         ->on('users')
         ->onDelete('cascade');
-      $table->timestamps();
     });
   }
 
@@ -36,6 +29,8 @@ class CreateWithdrawsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('withdraws');
+    Schema::table('withdraws', function (Blueprint $table) {
+      $table->dropColumn('messenger_id');
+    });
   }
 }

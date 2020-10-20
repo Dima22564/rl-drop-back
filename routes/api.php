@@ -69,11 +69,17 @@ Route::group([
   Route::get('/chest/{id}', 'Admin\ChestController@getById');
   Route::post('/chest/update/{id}', 'Admin\ChestController@update');
 
+  Route::get('/users', 'Admin\UserController@index');
+  Route::post('/users/add-role', 'Admin\UserController@addRole');
+  Route::post('/users/remove-role', 'Admin\UserController@removeRole');
+
+
+
 });
 
 Route::group([
   'prefix' => 'admin/stats',
-  'middleware' => ['auth.jwt', \App\Http\Middleware\isAdmin::class]
+  'middleware' => ['auth.jwt']
 ], function () {
   Route::get('/chest/{craft}', 'Admin\Stats\ChestController@index');
   Route::post('/chest-stats-between-time', 'Admin\Stats\ChestController@chestStatsBetweenTime');
