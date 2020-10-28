@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use App\User;
+use App\Role;
 
 class isAdmin
 {
@@ -16,7 +18,8 @@ class isAdmin
    */
   public function handle($request, Closure $next)
   {
-    if (!Auth::user()->isAdmin()) {
+    $roles = User::getAuthUserRoles();
+    if (!in_array(Role::ADMIN_ROLE, $roles)) {
       return response()->json([
         'error' => new \Exception('Forbidden'),
         'success' => false], 403);

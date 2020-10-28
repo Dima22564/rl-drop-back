@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Stats;
 
+use App\Role;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ class CraftController extends Controller
 
   public function index($craft)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     $data = $this->statsService->getFilteredItemsForCraft($craft);

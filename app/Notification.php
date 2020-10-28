@@ -9,7 +9,7 @@ class Notification extends Model
 {
   protected $table = 'notifications';
 
-  protected $fillable = ['text_ru', 'text_en', 'type', 'user_id', 'date'];
+  protected $fillable = ['text_ru', 'text_en', 'type', 'user_id', 'date', 'can_close'];
 
   const SUCCESS = 'success';
   const WARNING = 'warning';

@@ -45,7 +45,7 @@ Route::group([
 
     Route::post('/user/links', 'UserController@links');
 
-    Route::post('/withdraw', 'WithdrawController@withdraw');
+    Route::post('/user/withdraw', 'WithdrawController@withdraw');
   });
 
 Route::group([
@@ -72,6 +72,11 @@ Route::group([
   Route::get('/users', 'Admin\UserController@index');
   Route::post('/users/add-role', 'Admin\UserController@addRole');
   Route::post('/users/remove-role', 'Admin\UserController@removeRole');
+
+  Route::get('/withdraws', 'Admin\WithdrawController@index');
+  Route::post('/withdraws/take', 'Admin\WithdrawController@take');
+  Route::post('/withdraws/deny', 'Admin\WithdrawController@deny');
+  Route::post('/withdraws/withdraw', 'Admin\WithdrawController@withdraw');
 
 
 

@@ -56,6 +56,7 @@ class ItemController extends Controller
       $price = $platform . '_price';
 
       if (!Gate::allows('check-balance', $item->$price)) {
+        \auth()->user()->checkNotifications();
         $notification = Notification::create([
           'text_en' => '<span class="white">You</span> have not enough money. You can  ' . '<span class="blue"> make deposit. </span>',
           'text_ru' => '<span class="white">У Вас</span> не достаточно средств. Вы можете  ' . '<span class="blue"> пополнить баланс. </span>',

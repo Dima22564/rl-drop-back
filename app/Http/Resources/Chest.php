@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Role;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Item as ItemResource;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,7 @@ class Chest extends JsonResource
       'name' => $this->name,
       'oldPrice' => $this->old_price,
       'image' => $this->image,
-      'visibility' => $this->when(Gate::allows('admin'), $this->is_case_visible_for_user),
+      'visibility' => $this->when(Auth::user() ? auth()->user()->hasAccess([Role::ADMIN_ROLE]) : false, $this->is_case_visible_for_user),
       'xboxPrice' => $this->xbox_price,
       'pcPrice' => $this->pc_price,
       'ps4Price' => $this->ps4_price,

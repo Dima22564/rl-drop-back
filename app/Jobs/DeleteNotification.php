@@ -31,6 +31,9 @@ class DeleteNotification implements ShouldQueue
    */
   public function handle()
   {
-    Notification::destroy($this->id);
+    $notification = Notification::find($this->id);
+    if ($notification->can_close === 1) {
+      Notification::destroy($this->id);
+    }
   }
 }

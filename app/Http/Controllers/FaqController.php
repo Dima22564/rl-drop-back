@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Faq;
+use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,14 +13,6 @@ use Illuminate\Support\Facades\Redis;
 
 class FaqController extends Controller
 {
-
-  private $user;
-
-  public function __construct()
-  {
-    $this->user = Auth::user();
-  }
-
   public function index()
   {
 //    if (Auth::user()->isAdmin()) {
@@ -30,7 +23,7 @@ class FaqController extends Controller
 //    });
 //    }
     $locale = app()->getLocale();
-    if ($this->user and $this->user->isAdmin()) {
+    if (auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       $faqs = Cache::remember('faqsAdmin',  24 * 60 * 60, function () {
         return Faq::all();
       });

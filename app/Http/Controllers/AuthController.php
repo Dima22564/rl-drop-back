@@ -46,8 +46,7 @@ class AuthController extends BaseController
       'type' => 'primary',
       'room_id' => $user->id
     ]);
-//      return new \App\Http\Resources\User($user);
-//    return $user;
+
     return $this->respondWithToken($token, $img2fa);
   }
 

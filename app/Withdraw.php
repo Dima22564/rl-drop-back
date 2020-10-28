@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Withdraw extends Model
 {
   protected $table = 'withdraws';
+  protected $fillable = ['messenger_id', 'status'];
 
   public const PENDING = 'pending';
   public const SUCCESS = 'success';

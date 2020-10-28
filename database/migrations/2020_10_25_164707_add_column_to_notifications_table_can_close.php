@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnMessengerIdToWithdrawsTable extends Migration
+class AddColumnToNotificationsTableCanClose extends Migration
 {
   /**
    * Run the migrations.
@@ -13,13 +13,10 @@ class AddColumnMessengerIdToWithdrawsTable extends Migration
    */
   public function up()
   {
-    Schema::table('withdraws', function (Blueprint $table) {
-      $table->foreignId('messenger_id')
-        ->nullable()
+    Schema::table('notifications', function (Blueprint $table) {
+      $table->boolean('can_close')
         ->after('user_id')
-        ->references('id')
-        ->on('users')
-        ->onDelete('cascade');
+        ->default(1);
     });
   }
 
@@ -30,8 +27,8 @@ class AddColumnMessengerIdToWithdrawsTable extends Migration
    */
   public function down()
   {
-    Schema::table('withdraws', function (Blueprint $table) {
-      $table->dropColumn('messenger_id');
+    Schema::table('notifications', function (Blueprint $table) {
+      $table->dropColumn('can_close');
     });
   }
 }

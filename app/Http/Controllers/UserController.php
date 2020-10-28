@@ -81,7 +81,6 @@ class UserController extends BaseController
         $query
           ->withTrashed()
           ->where('craft_fail', 0)
-          ->where('is_withdraw', 0)
           ->where('sold', 0)
           ->orWhere('craft_fail', null)
           ->with('type');
@@ -91,6 +90,7 @@ class UserController extends BaseController
     if ($items->items->count() === 0) {
       return $this->sendResponse(false, 'No items', 200);
     }
+
     $inventory = $items->items
       ->groupBy('pivot.sold');
     $count = array_values($inventory[0]

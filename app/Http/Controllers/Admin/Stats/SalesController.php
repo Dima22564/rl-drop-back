@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Stats;
 
+use App\Role;
 use App\Services\Stats as StatsService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
@@ -18,7 +19,7 @@ class SalesController extends Controller
 
   public function index()
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     $items = $this->statsService->getSoldItemsGroupedByPlatforms();

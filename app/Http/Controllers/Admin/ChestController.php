@@ -6,6 +6,7 @@ use App\Chest;
 use App\Http\Controllers\API\BaseController as Controller;
 use App\Http\Resources\Chest as ChestResource;
 use App\Item;
+use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class ChestController extends Controller
 {
   public function store(Request $request)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     Cache::forget('chests');
@@ -29,7 +30,7 @@ class ChestController extends Controller
 
   public function index()
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     $chests = Chest::with('items')->get();
@@ -39,7 +40,7 @@ class ChestController extends Controller
 
   public function deleteById(Request $request, $id)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     Cache::forget('chests');
@@ -50,7 +51,7 @@ class ChestController extends Controller
 
   public function update(Request $request, $id)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     Cache::forget('chests');
@@ -67,7 +68,7 @@ class ChestController extends Controller
 
   public function getById($id)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     $chest = Chest::with('items')->find($id);

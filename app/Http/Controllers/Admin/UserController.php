@@ -14,7 +14,7 @@ class UserController extends Controller
 {
   public function index()
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
 
@@ -29,7 +29,7 @@ class UserController extends Controller
 
   public function addRole(Request $request)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
 
@@ -60,7 +60,7 @@ class UserController extends Controller
 
   public function removeRole(Request $request)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
 

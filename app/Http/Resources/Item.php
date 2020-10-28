@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Role;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Chest as ChestResource;
 use App\Http\Resources\ItemType as ItemTypeResource;
@@ -35,16 +36,19 @@ class Item extends JsonResource
       'pivot' => [
         'id' => $this->whenPivotLoaded('user_item', function () {
           return $this->pivot->id;
+        }),
+        'withdrawStatus' => $this->whenPivotLoaded('user_item', function () {
+          return $this->pivot->withdraw_status;
         })
       ],
-      'weight' => $this->when(Gate::allows('admin'), $this->whenPivotLoaded('chests_items', function () {
+      'weight' => $this->when(Auth::user() ? auth()->user()->hasAccess([Role::ADMIN_ROLE]) : false, $this->whenPivotLoaded('chests_items', function () {
         return $this->pivot->weight;
       })),
       'text' => $this->text,
       'color' => $this->color,
       'type' => new ItemTypeResource($this->whenLoaded('type')),
-      'appearInChest' => $this->when(Gate::allows('admin'), $this->appear_in_chest),
-      'appearInCraft' => $this->when(Gate::allows('admin'), $this->appear_in_craft),
+      'appearInChest' => $this->when(Auth::user() ? auth()->user()->hasAccess([Role::ADMIN_ROLE]) : false, $this->appear_in_chest),
+      'appearInCraft' => $this->when(Auth::user() ? auth()->user()->hasAccess([Role::ADMIN_ROLE]) : false, $this->appear_in_craft),
       'chests' => ChestResource::collection($this->whenLoaded('chests'))
     ];
   }

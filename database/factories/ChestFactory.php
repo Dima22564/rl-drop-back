@@ -13,6 +13,7 @@ $factory->define(\App\Chest::class, function (Faker $faker) {
     'old_price' => $faker->numberBetween(10, 100),
     'pc_price' => $faker->numberBetween(10, 100),
     'xbox_price' => $faker->numberBetween(10, 100),
-    'ps4_price' => $faker->numberBetween(10, 100)
+    'ps4_price' => $faker->numberBetween(10, 100),
+    'category' => $faker->word
   ];
 });

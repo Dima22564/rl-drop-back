@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Stats;
 
+use App\Role;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class ChestController extends Controller
 
   public function index($craft)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     $data = $this->statsService->getIndexData($craft);
@@ -63,7 +64,7 @@ class ChestController extends Controller
 
   public function chestStatsBetweenTime(Request $request)
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     $to = $request->get('dateTo');

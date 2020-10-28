@@ -17,6 +17,8 @@ class User extends Authenticatable implements JWTSubject
 {
   use HasApiTokens, Notifiable;
 
+  public const MAX_NOTIFICATIONS = 4;
+
   /**
    * The attributes that are mass assignable.
    *
@@ -59,6 +61,50 @@ class User extends Authenticatable implements JWTSubject
     return [];
   }
 
+  public function checkNotifications()
+  {
+//    $user = \auth()->user();
+    $notifications = Notification::query()
+      ->where('user_id', $this->id)
+      ->get();
+
+    if ($notifications->count() >= $this::MAX_NOTIFICATIONS) {
+      $this->deleteLastNotification();
+      return false;
+    }
+
+    return true;
+  }
+
+  public function deleteLastNotification()
+  {
+    Notification::query()
+      ->where('user_id', $this->id)
+      ->orderBy('created_at', 'ASC')
+      ->limit(1)
+      ->delete();
+  }
+
+  public static function getAuthUserRoles()
+  {
+    return auth()->payload()['roles'];
+  }
+
+  public function hasAccess(array $roles)
+  {
+    $tokenRoles = auth()->payload()['roles'];
+    if (in_array(Role::ADMIN_ROLE, $roles)) {
+      return true;
+    }
+
+    foreach ($tokenRoles as $role) {
+      if (in_array($roles[$role], $tokenRoles)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public function cryptPassword($password)
   {
     $hashedPassword = Hash::make($password);
@@ -86,7 +132,7 @@ class User extends Authenticatable implements JWTSubject
   public function items()
   {
     return $this->belongsToMany(Item::class, 'user_item')
-      ->withPivot(['is_craft', 'sold', 'platform', 'id']);
+      ->withPivot(['is_craft', 'sold', 'platform', 'id', 'withdraw_status']);
   }
 
   public function changeBalance($price)
@@ -122,9 +168,7 @@ class User extends Authenticatable implements JWTSubject
   public static function getRoles($email)
   {
     return array_column(User::where('email', $email)
-      ->with(['roles' => function ($query) {
-        $query;
-      }])->first()->roles->toArray(), 'role');
+      ->with(['roles'])->first()->roles->toArray(), 'role');
   }
 
   public function savePhoto($image)

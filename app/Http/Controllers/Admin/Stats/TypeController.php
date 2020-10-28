@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Stats;
 
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as Controller;
@@ -13,7 +14,7 @@ class TypeController extends Controller
 {
   public function index()
   {
-    if (!Gate::allows('admin')) {
+    if (!auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
       return $this->sendError('Forbidden', [], 403);
     }
     $userItems = User::has('items')->with(['items' => function($query) {

@@ -67,6 +67,7 @@ class PasswordResetController extends BaseController
     $passwordResetCell->delete();
     $user->cryptPassword($request->get('password'));
 
+    $user->checkNotifications();
     $notification = Notification::create([
       'text_en' => sprintf("<span class=\"white\"> You</span> changed your password!"),
       'text_ru' => sprintf("<span class=\"white\"> Вы</span> сменили пароль!"),
