@@ -31,7 +31,7 @@ class AddColumnMessengerIdToWithdrawsTable extends Migration
   public function down()
   {
     Schema::table('withdraws', function (Blueprint $table) {
-      $table->dropColumn('messenger_id');
+      $table->dropForeign('withdraws_messenger_id_foreign');
     });
   }
 }

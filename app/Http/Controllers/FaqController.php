@@ -23,7 +23,7 @@ class FaqController extends Controller
 //    });
 //    }
     $locale = app()->getLocale();
-    if (auth()->user()->hasAccess([Role::ADMIN_ROLE])) {
+    if (auth()->user() ? auth()->user()->hasAccess([Role::ADMIN_ROLE]): false) {
       $faqs = Cache::remember('faqsAdmin',  24 * 60 * 60, function () {
         return Faq::all();
       });

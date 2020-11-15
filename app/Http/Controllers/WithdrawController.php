@@ -54,8 +54,7 @@ class WithdrawController extends Controller
       'text_ru' => sprintf("<span class=\"white\"> Вы</span> выводите предмет! <span class=\"blue\">Статус %s</span>", (string)Withdraw::PENDING),
       'type' => Notification::MESSAGE,
       'date' => Carbon::now()->format('Y-m-d H:m:s'),
-      'user_id' => $user->id,
-      'can_close' => 0
+      'user_id' => $user->id
     ]);
     event(new CreateNotification($notification));
 

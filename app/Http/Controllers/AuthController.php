@@ -67,7 +67,7 @@ class AuthController extends BaseController
     $role = Role::where('role', Role::USER_ROLE)->first();
     DB::table('user_role')->insert([
       'user_id' => $user->id,
-      'role_id' => $role->role_id
+      'role_id' => $role->id
     ]);
     return $this->sendResponse([], 'User created successfully', 201);
   }

@@ -14,15 +14,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SecurityController extends BaseController
 {
-//  private $user;
-
-//  public function __construct()
-//  {
-//    $this->user = JWTAuth::parseToken()->authenticate();
-//  }
-
-
-
   public function disable2fa(Request $request) {
     $fetchedUser = auth::user();
     if (!$fetchedUser->passwordSecurity->google2fa_enable) {

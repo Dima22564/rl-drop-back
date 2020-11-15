@@ -30,10 +30,9 @@ Route::group([
     Route::post('/user', 'UserController@getUser');
     Route::get('/user/stats', 'UserController@getStats');
     Route::post('/user/{id}/update', 'UserController@update');
-    Route::post('/user/{id}/security/change-password', 'SecurityController@updatePassword');
     Route::post('/enable2fa', 'SecurityController@enable2fa')->name('enable2faSecret');
     Route::post('/disable2fa/{id}', 'SecurityController@disable2fa')->name('disable2fa');
-    Route::post('/change-password', 'PasswordResetController@updatePassword');
+    Route::post('/change-password', 'PasswordResetController@sendConfirmEmailForUpdatePassword');
     Route::post('/open-chest', 'ChestController@openChest');
     Route::post('/play-craft', 'ItemController@play');
     Route::post('/sell-item', 'ItemController@sell');
@@ -109,6 +108,10 @@ Route::post('/reset-password/new-password', 'PasswordResetController@recoveryPas
 Route::get('/chest/{id}', 'ChestController@chest');
 
 Route::get('/faqs', 'FaqController@index')->middleware(Localization::class);
+
+Route::get('/win-items', 'AllController@winItems');
+
+Route::post('/password-update', 'PasswordResetController@updatePassword');
 
 
 

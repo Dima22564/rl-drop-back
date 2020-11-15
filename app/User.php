@@ -17,6 +17,10 @@ class User extends Authenticatable implements JWTSubject
 {
   use HasApiTokens, Notifiable;
 
+  public const UPDATE_CREDENTIALS = 'update credentials';
+  public const UPDATE_PASSWORD = 'update password';
+  public const FORGET_PASSWORD = 'forget password';
+
   public const MAX_NOTIFICATIONS = 4;
 
   /**
@@ -25,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
    * @var array
    */
   protected $fillable = [
-    'name', 'email', 'phone_number', 'steam_link', 'xbox_link', 'ps4_link'
+    'name', 'email', 'phone_number', 'steam_link', 'xbox_link', 'ps4_link', 'temp_password', 'temp_confirm_password'
   ];
 
   /**
@@ -109,6 +113,11 @@ class User extends Authenticatable implements JWTSubject
   {
     $hashedPassword = Hash::make($password);
     $this->password = $hashedPassword;
+    $this->save();
+  }
+
+  public function savePassword($password) {
+    $this->password = $password;
     $this->save();
   }
 

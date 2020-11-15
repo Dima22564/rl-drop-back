@@ -8,7 +8,7 @@
   ],
   "license": "MIT",
   "require": {
-    "php": "^7.2.5",
+    "php": "^7.4",
     "bacon/bacon-qr-code": "^2.0",
     "doctrine/dbal": "^2.10",
     "endroid/qr-code": "^3.9",
@@ -23,6 +23,7 @@
     "pragmarx/google2fa-qrcode": "^1.0",
     "predis/predis": "^1.1",
     "pusher/pusher-php-server": "^4.1",
+    "ramsey/uuid": "^4.1",
     "tymon/jwt-auth": "^1.0"
   },
   "require-dev": {

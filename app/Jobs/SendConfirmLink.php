@@ -2,26 +2,30 @@
 
 namespace App\Jobs;
 
-use App\Notification;
+use App\Mail\PasswordReset;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ChangeCredentials;
 
-class DeleteNotification implements ShouldQueue
+class SendConfirmLink implements ShouldQueue
 {
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+  private array $details;
+
 
   /**
    * Create a new job instance.
    *
-   * @return void
+   * @param array $details
    */
-  private $id;
-  public function __construct($id)
+  public function __construct(array $details)
   {
-    $this->id = $id;
+    $this->details = $details;
   }
 
   /**
@@ -31,6 +35,7 @@ class DeleteNotification implements ShouldQueue
    */
   public function handle()
   {
-    Notification::destroy($this->id);
+    $email = new ChangeCredentials($this->details);
+    Mail::to($this->details['email'])->send($email);
   }
 }

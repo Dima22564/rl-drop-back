@@ -89,7 +89,6 @@ class WithdrawController extends Controller
       'type' => Notification::WARNING,
       'date' => Carbon::now()->format('Y-m-d H:m:s'),
       'user_id' => $user->id,
-      'can_close' => 0
     ]);
 
     event(new CreateNotification($notification));
@@ -135,7 +134,6 @@ class WithdrawController extends Controller
       'type' => Notification::SUCCESS,
       'date' => Carbon::now()->format('Y-m-d H:m:s'),
       'user_id' => $user->id,
-      'can_close' => 0
     ]);
 
     event(new CreateNotification($notification));

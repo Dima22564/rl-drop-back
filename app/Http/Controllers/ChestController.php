@@ -59,10 +59,13 @@ class ChestController extends Controller
       $platform = $request->get('platform');
       $price = $platform . '_price';
 
+      if (!$chest->$price) {
+        return $this->sendError('Unable to open chest!', '', 400);
+      }
+
       if (!Gate::allows('check-balance', $chest->$price)) {
         return $this->sendError('You have not enough money!', '', 400);
       }
-
 
       DB::beginTransaction();
 
@@ -79,16 +82,6 @@ class ChestController extends Controller
         'price' => $chest->$price
       ]);
 
-      $user->checkNotifications();
-      $notification = Notification::create([
-        'text_en' => sprintf("<span class=\"white\"> You</span> opened chest! <span class=\"blue\">-%s$</span>", (string)$chest->$price),
-        'text_ru' => sprintf("<span class=\"white\"> Вы</span> открыли кейс. <span class=\"blue\">-%s$</span>", (string)$chest->$price),
-        'type' => Notification::SUCCESS,
-        'date' => Carbon::now()->format('Y-m-d H:m:s'),
-        'user_id' => $user->id
-      ]);
-
-      event(new CreateNotification($notification));
       DB::commit();
 
       return $this->sendResponse(new ItemResource($item), 'Ok', 200);

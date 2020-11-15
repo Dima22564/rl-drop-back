@@ -13,17 +13,10 @@ use App\Http\Requests\User\UpdateUserRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use App\Jobs\DeleteNotification;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\File;
+
 
 class UserController extends BaseController
 {
-  public function __construct()
-  {
-//    $this->user = JWTAuth::parseToken()->authenticate();
-  }
 
   public function getUser()
   {
@@ -112,11 +105,6 @@ class UserController extends BaseController
   {
     $user = Auth::user();
     $user->savePhoto($request->file('photo'));
-//    Storage::delete('uploads/users/' . (string)$user->id . '.png');
-
-//    return unlink(storage_path('app/public/uploads/users/' . (string)$user->id . '.png'));
-//    return (string)$user->id;
-//    return file_exists(storage_path('app/public/uploads/users/12.png'));
 
     return $this->sendResponse($user->photo, 'Ok', 202);
   }
@@ -139,6 +127,14 @@ class UserController extends BaseController
           ->orWhere('craft_fail', null);
       })->count();
 
+    $bestItem = DB::table('user_item')
+      ->where('user_id', \auth()->user()->id)
+      ->orderBy('price', 'DESC')
+      ->limit(1)
+      ->join('items', 'items.id', '=', 'user_item.item_id')
+      ->select(['items.image', 'items.id', 'items.name'])
+      ->first();
+
     $casesCrafts = [];
     foreach ($cases as $key => $value) {
       foreach ($value as $key2 => $value2) {
@@ -149,7 +145,8 @@ class UserController extends BaseController
     return $this->sendResponse([
       'cases' => (array_key_exists('cases', $casesCrafts)) ? $casesCrafts['cases'] : 0,
       'crafts' => (array_key_exists('crafts', $casesCrafts)) ? $casesCrafts['crafts'] : 0,
-      'items' => $items
+      'items' => $items,
+      'bestItem' => $bestItem
     ], 'Ok', 200);
 
   }

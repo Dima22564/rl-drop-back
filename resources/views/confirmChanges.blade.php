@@ -131,7 +131,7 @@
 
   <div>
     <h2>Follow link to commit changes!</h2>
-    <a href="">{{$details['token']}}</a>
+    <a href="http://localhost:3000/confirm-changes/{{$details['token']}}">Follow this link!</a>
   </div>
 
 </body>
