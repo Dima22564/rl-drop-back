@@ -15,7 +15,7 @@ class AddLimitedToChestsTable extends Migration
   {
     Schema::table('chests', function (Blueprint $table) {
       $table->boolean('is_limited')->default(0);
-      $table->integer('max_open')->nullable();
+      $table->integer('max_open')->nullable()->default(0);
       $table->integer('current_open')->nullable();
       $table->text('background_image')->nullable();
     });
@@ -29,7 +29,10 @@ class AddLimitedToChestsTable extends Migration
   public function down()
   {
     Schema::table('chests', function (Blueprint $table) {
-      //
+      $table->dropColumn('is_limited');
+      $table->dropColumn('max_open');
+      $table->dropColumn('current_open');
+      $table->dropColumn('background_image');
     });
   }
 }

@@ -15,13 +15,13 @@ class CreateIndexBottomBannerTable extends Migration
   {
     Schema::create('index_bottom_banner', function (Blueprint $table) {
       $table->id();
-      $table->string('name');
-      $table->string('title_ru');
-      $table->string('title_en');
-      $table->text('text_ru');
-      $table->text('text_en');
-      $table->integer('case_id');
-      $table->text('image');
+      $table->string('name')->nullable();
+      $table->string('title')->nullable();
+      $table->text('text_ru')->nullable();
+      $table->text('text_en')->nullable();
+      $table->integer('case_id')->nullable();
+      $table->text('image')->nullable();
+      $table->text('mobile_image')->nullable();
     });
   }
 

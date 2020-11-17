@@ -20,7 +20,10 @@ class Chest extends Model
     'xbox_price',
     'pc_price',
     'ps4_price',
-    'category'
+    'category',
+    'is_limited',
+    'max_open',
+    'current_open'
   ];
 
   public function items()
@@ -87,6 +90,12 @@ class Chest extends Model
     $r = $image->storeAs('public/uploads/chests', $filename);
     $storagePath = env('APP_URL', 'http://127.0.0.1:8000') . Storage::url('uploads/chests/' . $filename);
     $this->image = $storagePath;
+    $this->save();
+  }
+
+  public function addOpen()
+  {
+    $this->current_open += 1;
     $this->save();
   }
 

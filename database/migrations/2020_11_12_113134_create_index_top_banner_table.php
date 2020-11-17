@@ -15,13 +15,13 @@ class CreateIndexTopBannerTable extends Migration
   {
     Schema::create('index_top_banner', function (Blueprint $table) {
       $table->id();
-      $table->string('name');
-      $table->string('title_ru');
-      $table->string('title_en');
-      $table->string('case_category');
-      $table->string('end_date');
-      $table->string('start_date');
-      $table->text('image');
+      $table->string('name')->nullable();
+      $table->string('title')->nullable();
+      $table->string('case_category')->nullable();
+      $table->string('end_date')->nullable();
+      $table->string('start_date')->nullable();
+      $table->text('image')->nullable();
+      $table->text('mobile_image')->nullable();
     });
   }
 

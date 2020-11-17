@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Chest;
 use App\Faq;
+use App\IndexBottomBanner;
+use App\IndexTopBanner;
 use App\Item;
 use App\Notification;
 use App\User;
@@ -23,18 +25,19 @@ class ChestController extends Controller
 {
   public function chest($id)
   {
-//    TODO: catch error
     $chest = Chest::with(['items' => function ($query) {
       $query->with('type');
-    }])->findOrFail($id);
+    }])->find($id);
     $items = $chest->items->makeHidden(['type_id', 'pivot'])->groupBy('type.type');
 
-    return $this->sendResponse(['chest' => new ChestResource($chest), 'items' => $items], 'Ok', 200);
+    return $this->sendResponse([
+      'chest' => new ChestResource($chest),
+      'items' => $items
+    ], 'Ok', 200);
   }
 
   public function index()
   {
-
     $chests = Cache::remember('chests', 60 * 60, function () {
       $groupedChests = Chest::where('is_case_visible_for_user', 1)
         ->get();
@@ -42,8 +45,13 @@ class ChestController extends Controller
       return collect($chestsCollection)->groupBy('category');
     });
 
+    $bottomBanner = IndexBottomBanner::where('name', 'bottom-index-banner')->first();
+    $topBanner = IndexTopBanner::where('name', 'top-index-banner')->first();
+
     return $this->sendResponse([
-      'chests' => $chests
+      'chests' => $chests,
+      'indexTopBanner' => $topBanner,
+      'indexBottomBanner' => $bottomBanner
     ], 'Ok', 200);
   }
 
@@ -51,7 +59,7 @@ class ChestController extends Controller
   {
     $user = auth()->user();
     try {
-      $chest = Chest::with(['items' => function($query) {
+      $chest = Chest::with(['items' => function ($query) {
         $query->where('appear_in_chest', 1);
       }])
         ->where('id', $request->get('id'))
@@ -59,7 +67,7 @@ class ChestController extends Controller
       $platform = $request->get('platform');
       $price = $platform . '_price';
 
-      if (!$chest->$price) {
+      if (!$chest->$price || $chest->$price == 0) {
         return $this->sendError('Unable to open chest!', '', 400);
       }
 
@@ -67,7 +75,12 @@ class ChestController extends Controller
         return $this->sendError('You have not enough money!', '', 400);
       }
 
+      if ($chest->is_limited && ($chest->max_open <= $chest->current_open)) {
+        return $this->sendError('Case limited!', '', 400);
+      }
+
       DB::beginTransaction();
+      $chest->addOpen();
 
       $user->changeBalance($chest->$price * -1);
 

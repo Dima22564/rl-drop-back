@@ -77,7 +77,11 @@ Route::group([
   Route::post('/withdraws/deny', 'Admin\WithdrawController@deny');
   Route::post('/withdraws/withdraw', 'Admin\WithdrawController@withdraw');
 
+  Route::post('/index-top-banner', 'Admin\IndexTopBannerController@update');
+  Route::get('/index-top-banner', 'Admin\IndexTopBannerController@index');
 
+  Route::post('/index-bottom-banner', 'Admin\IndexBottomBannerController@update');
+  Route::get('/index-bottom-banner', 'Admin\IndexBottomBannerController@index');
 
 });
 

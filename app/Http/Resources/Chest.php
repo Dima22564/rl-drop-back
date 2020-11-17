@@ -32,6 +32,10 @@ class Chest extends JsonResource
       'items' => ItemResource::collection($this->whenLoaded('items')),
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at,
+      'isLimited' => $this->is_limited,
+      'maxOpen' => $this->max_open,
+      'currentOpen' => $this->current_open,
+      'backgroundImage' => $this->backgroud_image
     ];
   }
 }
