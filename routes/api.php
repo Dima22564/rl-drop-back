@@ -29,7 +29,7 @@ Route::group([
     Route::post('/logout', 'AuthController@logout');
     Route::post('/user', 'UserController@getUser');
     Route::get('/user/stats', 'UserController@getStats');
-    Route::post('/user/{id}/update', 'UserController@update');
+    Route::post('/user/{id}/update', 'UserController@sendUpdateLink');
     Route::post('/enable2fa', 'SecurityController@enable2fa')->name('enable2faSecret');
     Route::post('/disable2fa/{id}', 'SecurityController@disable2fa')->name('disable2fa');
     Route::post('/change-password', 'PasswordResetController@sendConfirmEmailForUpdatePassword');
@@ -37,7 +37,10 @@ Route::group([
     Route::post('/play-craft', 'ItemController@play');
     Route::post('/sell-item', 'ItemController@sell');
 
+
+
     Route::get('/read-notification/{id}', 'UserController@readNotification');
+    Route::get('/notifications/read-all', 'UserController@readAllNotifications');
 
     Route::get('/inventory', 'UserController@getInventory');
     Route::post('/user/change-photo', 'UserController@changePhoto');
@@ -101,6 +104,7 @@ Route::group([
 Route::get('/chests-list', 'ChestController@index');
 Route::get('/craft-items', 'ItemController@loadCraftItems');
 Route::get('/craft-item/{id}', 'ItemController@craftItem');
+Route::get('/user/{id}', 'UserController@index');
 
 Route::get('/stats', 'AllController@index');
 
@@ -117,5 +121,6 @@ Route::get('/win-items', 'AllController@winItems');
 
 Route::post('/password-update', 'PasswordResetController@updatePassword');
 
+Route::post('/user/confirm', 'UserController@update');
 
 

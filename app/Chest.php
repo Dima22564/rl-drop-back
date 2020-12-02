@@ -93,6 +93,23 @@ class Chest extends Model
     $this->save();
   }
 
+  public function saveBackgroundImage($image)
+  {
+    $filename = $this->id . '-bg' . '.' . $image->extension();
+    $path1 = 'app/public/uploads/chests/' . $this->id . '-bg' . '.png';
+    $path2 = 'app/public/uploads/chests/' . $this->id . '-bg' . '.jpg';
+
+    if (file_exists(storage_path($path1))) {
+      unlink(storage_path('app/public/uploads/chests/' . (string)$this->id . '-bg' . '.png'));
+    } elseif (file_exists(storage_path($path2))) {
+      unlink(storage_path('app/public/uploads/chests/' . (string)$this->id . '-bg' . '.jpg'));
+    }
+    $r = $image->storeAs('public/uploads/chests', $filename);
+    $storagePath = env('APP_URL', 'http://127.0.0.1:8000') . Storage::url('uploads/chests/' . $filename);
+    $this->background_image = $storagePath;
+    $this->save();
+  }
+
   public function addOpen()
   {
     $this->current_open += 1;

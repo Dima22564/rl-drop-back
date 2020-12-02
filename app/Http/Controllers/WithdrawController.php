@@ -16,6 +16,9 @@ class WithdrawController extends Controller
   public function withdraw(Request $request)
   {
     $user = Auth::user();
+    if ($user->id !== $request->get('userId')) {
+      return $this->sendError([], 'You do not have access!', 400);
+    }
     DB::beginTransaction();
     $item = DB::table('user_item')
       ->where('user_id', $user->id)

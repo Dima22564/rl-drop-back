@@ -21,7 +21,7 @@ class User extends Authenticatable implements JWTSubject
   public const UPDATE_PASSWORD = 'update password';
   public const FORGET_PASSWORD = 'forget password';
 
-  public const MAX_NOTIFICATIONS = 4;
+  public const MAX_NOTIFICATIONS = 20;
 
   /**
    * The attributes that are mass assignable.

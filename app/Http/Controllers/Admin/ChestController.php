@@ -24,6 +24,7 @@ class ChestController extends Controller
     $chest = Chest::create($request->all());
     $chest->saveItems(json_decode($request->get('items')));
     $chest->saveImage($request->file('image'));
+    $chest->saveBackgroundImage($request->file('backgroundImage'));
 
     return $this->sendResponse(new ChestResource($chest), 'Ok', 201);
   }

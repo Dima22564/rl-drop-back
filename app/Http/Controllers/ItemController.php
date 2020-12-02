@@ -85,6 +85,11 @@ class ItemController extends Controller
       $platform = $request->get('platform');
       $item = Item::where('id', $request->get('id'))->first();
       $price = $request->get('platform') . '_price';
+
+      if (\auth()->user()->id != $request->get('userId')) {
+        return $this->sendError([], 'You do not have access!', 400);
+      }
+
       DB::beginTransaction();
 
       $userItem = DB::table('user_item')

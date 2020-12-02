@@ -35,7 +35,7 @@ class Chest extends JsonResource
       'isLimited' => $this->is_limited,
       'maxOpen' => $this->max_open,
       'currentOpen' => $this->current_open,
-      'backgroundImage' => $this->backgroud_image
+      'backgroundImage' => $this->background_image
     ];
   }
 }
