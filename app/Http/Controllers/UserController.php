@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Chest;
 use App\Jobs\SendConfirmLink;
 use App\Jobs\SendLinkToUpdateCredentials;
 use App\Notification;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\PasswordSecurity;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\Item as ItemResource;
+use App\Http\Resources\Chest as ChestResource;
 use App\Http\Requests\User\UpdateUserRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -153,8 +155,7 @@ class UserController extends BaseController
           ->withTrashed()
           ->where('withdraw_status', Withdraw::SUCCESS)
           ->with('type');
-      }])
-      ->first();
+      }])->first();
 
     if ($items->items->count() === 0) {
       return $this->sendResponse(false, 'No items', 200);
@@ -174,7 +175,7 @@ class UserController extends BaseController
     return $this->sendResponse([
       'inventory' => ItemResource::collection($inventory[0]),
       'count' => $count,
-      'soldItems' => ItemResource::collection($inventory[1]),
+      'soldItems' => count($inventory) > 2 ? ItemResource::collection($inventory[1]) : [],
       'withdrewItems' => ItemResource::collection($withdrewItems->items)
     ], 'Ok', 200);
   }
@@ -333,14 +334,32 @@ class UserController extends BaseController
       }
     }
 
+    $cases = DB::table('user_chest')
+      ->where('user_id', $id)
+      ->get()
+      ->groupBy('chest_id')
+      ->sortByDesc(function ($item, $key) {
+        return count($item);
+      })
+      ->map(function ($item, $key) {
+        return collect(['chestId' => $key, 'chestCount' => count($item)]);
+      })->values()->first();
+
+    $bestCase = Chest::withTrashed()
+      ->where('id', $cases->get('chestId'))
+      ->select('id', 'name', 'image')
+      ->first();
+
+
     return $this->sendResponse([
       'cases' => (array_key_exists('cases', $casesCrafts)) ? $casesCrafts['cases'] : 0,
       'crafts' => (array_key_exists('crafts', $casesCrafts)) ? $casesCrafts['crafts'] : 0,
       'items' => $items,
       'bestItem' => $bestItem,
+      'bestCase' => new ChestResource($bestCase),
       'user' => $user,
       'inventory' => ItemResource::collection($inventory[0]),
-      'soldItems' => ItemResource::collection($inventory[1]),
+      'soldItems' => count($inventory) > 2 ? ItemResource::collection($inventory[1]) : [],
       'withdrewItems' => ItemResource::collection($withdrewItems->items),
       'count' => $count,
     ], 'Ok', 200);

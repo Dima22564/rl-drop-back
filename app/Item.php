@@ -23,7 +23,8 @@ class Item extends Model
     'appear_in_chest',
     'appear_in_craft',
     'color',
-    'text'
+    'text',
+    'type_id'
   ];
 
 //  public const PERCENT_OF_ITEMS = 20;

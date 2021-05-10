@@ -80,6 +80,7 @@ class ChestController extends Controller
       }
 
       DB::beginTransaction();
+      Cache::forget('chests');
       $chest->addOpen();
 
       $user->changeBalance($chest->$price * -1);
